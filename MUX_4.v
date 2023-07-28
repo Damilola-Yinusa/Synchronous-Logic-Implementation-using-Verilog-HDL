@@ -1,0 +1,17 @@
+module MUX_4(S, Reg0, Reg1, Reg2, Reg3, M);
+  parameter size = 4;
+  input [size-1:0] Reg0, Reg1, Reg2, Reg3;
+  input [1:0] S;
+  output reg [size-1:0] M;
+  
+  always @(Reg0 or Reg1 or Reg2 or Reg3 or S)
+    begin
+     case(S)
+        00: M <= Reg0;
+        01: M <= Reg1;
+        10: M <= Reg2;
+        default: M <= Reg3;
+      endcase
+    end
+endmodule
+      

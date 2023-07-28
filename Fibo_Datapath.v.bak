@@ -1,0 +1,43 @@
+module Fibo_Datapath (Clk, wrt_addr, wrt_en, load_data, rd_addr1, rd_addr2, alu_opcode, count, data, zero_flag);
+  parameter size = 4;
+  input [size-1:0] count;
+  input [size-2:0] alu_opcode;
+  input [1:0] wrt_addr, rd_addr1, rd_addr2;
+  input Clk, wrt_en, load_data;
+  output [size-1:0] data;
+  output zero_flag;
+  wire [size-1:0] Y, Reg0, Reg1, Reg2, Reg3, F0, F1, F2, F3, F4, M0, M1;
+  wire A, B, C, D, S0, S1, S2, S3;
+  
+  //Connecting the 2-to-4 decoder:
+  decoder Decoder (wrt_addr, A, B, C, D);
+  
+  //Connecting 4 AND gates:
+  AND_Gates G0 (wrt_en, A, S0);
+  AND_Gates G1 (wrt_en, B, S1);
+  AND_Gates G2 (wrt_en, C, S2);
+  AND_Gates G3 (wrt_en, D, S3);
+  
+  //Connecting 4 2-to-1 MUXs and 4 D-FFs (a register):
+  MUX_2 MUX0 (S0, Y, Reg0, F0);
+  MUX_2 MUX1 (S1, Y, Reg1, F1);
+  MUX_2 MUX2 (S2, Y, Reg2, F2);
+  MUX_2 MUX3 (S3, Y, Reg3, F3);
+  Registers R (Clk, F0, F1, F2, F3, Reg0, Reg1, Reg2, Reg3);
+
+  //Connecting single MUX:
+  MUX_2 M (load_data, count, data, Y);
+  
+  //Connecting 2 4-to-1 MUX and ALU:
+  MUX_4 mux1 (rd_addr1, Reg0, Reg1, Reg2, Reg3, M1);
+  MUX_4 mux2 (rd_addr2, Reg0, Reg1, Reg2, Reg3, M0);
+  ALU ALU (M1, M0, alu_opcode, F4, zero_flag);
+  
+   //Connecting single D-FF at the very bottom:
+  new_DFF DFF (Clk, F4, data);
+  
+  //Connecting memory - single register on the left
+  Memory memory (Clk, data, count);
+  
+  
+endmodule

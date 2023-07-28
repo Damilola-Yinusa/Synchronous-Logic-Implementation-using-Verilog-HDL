@@ -1,0 +1,19 @@
+module decoder(wrt_addr, A, B, C, D);
+  input [1:0] wrt_addr;
+  output reg A, B, C, D;
+  
+  initial
+    begin
+     A=0; B=0; C=0; D=0;
+    end
+  
+  always @(wrt_addr)
+    begin
+      case(wrt_addr)
+        00: A=1;
+        01: B=1;
+        10: C=1;
+        11: D=1;
+      endcase
+    end
+endmodule

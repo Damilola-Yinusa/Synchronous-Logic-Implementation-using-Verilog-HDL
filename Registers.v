@@ -1,0 +1,22 @@
+module Registers (Clk, F0, F1, F2, F3, Reg0, Reg1, Reg2, Reg3);
+  parameter size = 4 ;
+  input wire [size-1:0] F0, F1, F2, F3;
+  input Clk;
+  output wire [size-1:0] Reg0, Reg1, Reg2, Reg3;
+  reg [size-1:0] D0, D1, D2, D3;
+  
+ // Creating a register with 4 D-FFs:
+  DFF FF0 (Clk, D0, Reg0);  
+  DFF FF1 (Clk, D1, Reg1);
+  DFF FF2 (Clk, D2, Reg2);
+  DFF FF3 (Clk, D3, Reg3);
+  
+  always @(posedge Clk)
+    begin
+      D0 <= F0;
+      D1 <= F1;
+      D2 <= F2;
+      D3 <= F3;
+    end
+	 
+endmodule
